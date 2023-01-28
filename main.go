@@ -8,7 +8,7 @@ import (
 func main() {
 	var se executor.ScrabbleExecutor = &executor.TerminalScrabbleExecutor{
 		Word:      "",
-		Scrabbler: controllers.NewMockScrabbler(),
+		Scrabbler: controllers.NewHttpScrabbler(),
 	}
 
 	se.Init()

@@ -14,11 +14,16 @@ type TerminalScrabbleExecutor struct {
 	Scrabbler controllers.Scrabbler
 }
 
+var (
+	NoSessionError = "You have not started a session, enter \"scrab new\" to begin"
+)
+
 func (se *TerminalScrabbleExecutor) Init() {
 	fmt.Println("Hello, Welcome to terminal scrabble, use any of the following commands:" +
-		"\n  scrab new  : to begin a new session" +
+		"\n  scrab new : to begin a new session" +
 		"\n  srab re : to rearrange the word" +
-		"\n  srab ans  <yourAnswer> : to check your result" +
+		"\n  srab ans  <yourAnswer> : to check your answer" +
+		"\n  srab tell : to reveal the answer" +
 		"\nLet's go!")
 
 	se.readAndHandleInput()
@@ -31,36 +36,52 @@ func (se *TerminalScrabbleExecutor) OnNewScrabbleCommand() {
 	word, err := se.Scrabbler.FetchWord()
 	if err != nil {
 		fmt.Println(err)
-	} else if word == nil || len(*word) == 0 {
-		fmt.Println("Error generating word")
-	} else {
-		se.Word = *word
-
-		scrabbledWord := se.Scrabbler.ScrabbleWord(*word)
-		fmt.Println(scrabbledWord)
+		return
 	}
+	if word == nil || len(*word) == 0 {
+		fmt.Println("Error generating word")
+		return
+
+	}
+	se.Word = *word
+
+	scrabbledWord := se.Scrabbler.ScrabbleWord(*word)
+	fmt.Println(scrabbledWord)
+
 }
 
 func (se *TerminalScrabbleExecutor) OnReScrabbleCommand() {
 	if !se.SessionStarted() {
-		fmt.Println("You have not started a session, enter \"scrab new\" to begin")
-	} else {
-		scrabbledWord := se.Scrabbler.ScrabbleWord(se.Word)
-		fmt.Println(scrabbledWord)
+		fmt.Println(NoSessionError)
+		return
 	}
+
+	scrabbledWord := se.Scrabbler.ScrabbleWord(se.Word)
+	fmt.Println(scrabbledWord)
+
 }
 
 func (se *TerminalScrabbleExecutor) OnAnswerScrabbleCommand(answer string) {
 	if !se.SessionStarted() {
-		fmt.Println("You have not started a session, enter \"scrab new\" to begin")
-	} else {
-		correct := se.Scrabbler.CheckAnswer(se.Word, answer)
-		if !correct {
-			fmt.Println("Ooops incorrect, lets try again!")
-		} else {
-			fmt.Println("Correct!, You're the boss")
-		}
+		fmt.Println(NoSessionError)
+		return
 	}
+
+	correct := se.Scrabbler.CheckAnswer(se.Word, answer)
+	if !correct {
+		fmt.Println("Ooops incorrect, lets try again!")
+	} else {
+		fmt.Println("Correct!, You're the boss")
+	}
+
+}
+
+func (se *TerminalScrabbleExecutor) OnRevealAnswerCommand() {
+	if !se.SessionStarted() {
+		fmt.Println(NoSessionError)
+		return
+	}
+	fmt.Printf("The answer is %s\n", se.Word)
 }
 
 func (se *TerminalScrabbleExecutor) readAndHandleInput() {
@@ -87,6 +108,9 @@ func (se *TerminalScrabbleExecutor) readAndHandleInput() {
 		} else {
 			se.OnAnswerScrabbleCommand(split[2])
 		}
+		se.readAndHandleInput()
+	} else if strings.EqualFold(text, "scrab tell") {
+		se.OnRevealAnswerCommand()
 		se.readAndHandleInput()
 	} else {
 		fmt.Println("Unknown command")

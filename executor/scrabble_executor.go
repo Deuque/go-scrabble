@@ -6,4 +6,5 @@ type ScrabbleExecutor interface {
 	OnNewScrabbleCommand()
 	OnReScrabbleCommand()
 	OnAnswerScrabbleCommand(answer string)
+	OnRevealAnswerCommand()
 }
