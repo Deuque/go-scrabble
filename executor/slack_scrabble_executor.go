@@ -36,7 +36,6 @@ func (se *SlackScrabbleExecutor) sessionStarted() bool {
 }
 
 func (se *SlackScrabbleExecutor) onNewScrabbleCommand(writer *ScrabbleWriter) {
-
 	word, err := se.FetchWord()
 	if err != nil {
 		writer.Write(err.Error())
@@ -114,7 +113,7 @@ func (se *SlackScrabbleExecutor) handleBotInput() {
 			writer := botScrabbleWriter(response)
 			answer := request.Param("answer")
 			if len(answer) == 0 {
-				writer.Write("Attach the answer after the word \"answer")
+				writer.Write("Attach the answer after the word \"answer\"")
 			} else {
 				se.onAnswerScrabbleCommand(answer, writer)
 			}

@@ -110,7 +110,7 @@ func (se *TerminalScrabbleExecutor) readAndHandleInput(writer *ScrabbleWriter) {
 	} else if strings.HasPrefix(text, "scrab ans") {
 		split := strings.Split(text, " ")
 		if len(split) < 3 {
-			writer.Write("Attach the answer after the word \"ans")
+			writer.Write("Attach the answer after the word \"ans\"")
 		} else {
 			se.onAnswerScrabbleCommand(split[2], writer)
 		}
