@@ -12,8 +12,8 @@ type Scrabbler struct {
 	FetchWord func() (*string, error)
 }
 
-func NewMockScrabbler() Scrabbler {
-	return Scrabbler{
+func NewMockScrabbler() *Scrabbler {
+	return &Scrabbler{
 		func() (*string, error) {
 			testWord := []string{"flavor", "kettle", "Rainbow"}
 			ri := util.RandomInt(len(testWord) - 1)
@@ -22,8 +22,8 @@ func NewMockScrabbler() Scrabbler {
 	}
 }
 
-func NewHttpScrabbler() Scrabbler {
-	return Scrabbler{
+func NewHttpScrabbler() *Scrabbler {
+	return &Scrabbler{
 		func() (*string, error) {
 			req, err := http.NewRequest(http.MethodGet, "https://random-word-api.herokuapp.com/word", nil)
 			if err != nil {

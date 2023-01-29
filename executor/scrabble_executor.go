@@ -2,9 +2,13 @@ package executor
 
 type ScrabbleExecutor interface {
 	Init()
-	SessionStarted() bool
-	OnNewScrabbleCommand()
-	OnReScrabbleCommand()
-	OnAnswerScrabbleCommand(answer string)
-	OnRevealAnswerCommand()
+	sessionStarted() bool
+	onNewScrabbleCommand(*ScrabbleWriter)
+	onReShuffleCommand(*ScrabbleWriter)
+	onAnswerScrabbleCommand(answer string, writer *ScrabbleWriter)
+	onRevealAnswerCommand(*ScrabbleWriter)
+}
+
+type ScrabbleWriter struct {
+	Write func(string) error
 }
